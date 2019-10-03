@@ -7,23 +7,21 @@ services:
       - "636:636"
     networks:
         server3:
-        ipv4_address: '172.25.0.3'
+          ipv4_address: '172.25.1.8'
+    volumes:
+    - ./var/lib/ldap:/var/lib/ldap
+    - ./etc/ldap:/etc/ldap
 
     environment:
-    DOMAIN: ldap.cloyne.org
-    PASSWORD: 1234567890
-    DEBUG: 0
+      DOMAIN: ldap.cloyne.org
+      PASSWORD: 1234567890
+      DEBUG: 0
 
 networks:
   server3:
     driver: bridge
     ipam:
       config:
-        - subnet: '172.25.0.0/24'
+        - subnet: '172.25.1.0/24'
+ 
 
-volumes:
-  - ./var/lib/ldap:/var/lib/ldap
-  - ./etc/ldap:/etc/ldap
-
-
-  
