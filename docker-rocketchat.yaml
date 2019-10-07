@@ -1,0 +1,65 @@
+version: "3"
+services:
+  ldap:
+    image: clonm/openldap
+    ports:
+      - "389:389"
+      - "636:636"
+    networks:
+        server2:
+          ipv4_address: '172.25.1.8'
+    volumes:
+    - ./var/lib/ldap:/var/lib/ldap
+    - ./etc/ldap:/etc/ldap
+
+    environment:
+      DOMAIN: ldap.cloyne.org
+      PASSWORD: 1234567890
+      DEBUG: 0
+      
+  rocketchat:
+    image: cloyne/rocketchat
+    # build: .
+    container_name: rocketchat
+    networks:
+      server3:
+        ipv4_address: '172.25.0.2'
+      server2:
+        ipv4_address: '172.25.1.7'
+    environment:
+      MONGO_URL: mongodb://mongo:27017/rocketchat
+      MONGO_OPLOG_URL: mongodb://mongo:27017/local?replSet=rs01
+      ROOT_URL: https://chat.cloyne.org
+    volumes:
+      - /srv/log/rocketchat:/var/log/rocketchat
+    ports:
+      - "80:80"
+      - "443:443"
+      - "3000:3000"
+    links:
+        - mongo:mongo
+  mongo:
+    image: cloyne/mongodb:3.6
+    container_name: mongo
+    networks:
+      server3:
+        ipv4_address: '172.25.0.3'
+    volumes:
+      - ./data/runtime/mongo:/data/db
+      - ./data/dump:/dump
+      - /srv/log/mongod:/var/log/mongod
+    command: mongod --smallfiles
+        
+
+networks:
+  server2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: '172.25.1.0/24'
+  server3:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: '172.25.0.0/24'    
+
