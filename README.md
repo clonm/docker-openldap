@@ -74,3 +74,7 @@ The base image has been replaced from [ubutnu](https://ubuntu.com) to [alpine](h
  - database is no more `hdb`, but `mdb`
 
 This means: Your database from previous versions cannot be used anymore. You need to create a backup and restore it after migration.
+
+Read more about LDAP
+---------------------------------
+See 'LDAP for Rocket Scientists' `www.zytrax.com/books/ldap` 
