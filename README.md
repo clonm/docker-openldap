@@ -11,14 +11,14 @@ OpenLDAP server in Ubuntu default configuration. Initial setup is
 configured though environment variables.
 
 Environment Variables:
-- `DOMAIN` (mandatory) 
+- `DOMAIN` (mandatory)
     Your domain name, e.g. `example.org`. The distinguish name is created from this domain, e.g. as `cn=example,cn=org`.
-- `PASSWORD` (optional) 
+- `PASSWORD` (optional)
     Administrator password, account is derieved from DOMAIN, e.g. `cn=admin,dc=example,dc=org`.
     If not given, a password is generated and written to docker logs.
-- `DEBUG` (optional) 
+- `DEBUG` (optional)
     Specifies the debug level, defaults to 0 (no debug output)
-- `INDEXES` (optional) 
+- `INDEXES` (optional)
     A list of indexes that the LDAP server should maintain, separated by spaces, e.g.: ` index uid eq index cn eq`.
 
 Ports:
@@ -41,15 +41,15 @@ Start your openLDAP server:
 docker run -it --rm --name openldap \
            -p 389:389 \
            -e DEBUG_LEVEL=1 \
-           -e DOMAIN=my-company.com \
-           -e ORGANIZATION="My Company" \
+           -e DOMAIN=cloyne.org \
+           -e ORGANIZATION="Cloyne" \
            -e PASSWORD=1234567890 \
            mwaeckerlin/openldap
 ```
 
 Now you can access your LDAP, e.g. through apache directory studio.
 
-To access `cn=config`, set `cn=config` as root and use the administrator account for binding, here `cn=admin,dc=my-company,dc=com` and password `1234567890`.
+To access `cn=config`, set `cn=config` as root and use the administrator account for binding, here `cn=admin,dc=cloyne,dc=org` and password `1234567890`.
 
 
 Restore a Backup
