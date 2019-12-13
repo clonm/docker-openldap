@@ -2,6 +2,7 @@ version: "3"
 services:
   ldap:
     image: clonm/openldap
+    container_name: ldap
     ports:
       - "389:389"
       - "636:636"
@@ -16,7 +17,7 @@ services:
       DOMAIN: ldap.cloyne.org
       PASSWORD: 1234567890
       DEBUG: 0
-      
+
   rocketchat:
     image: cloyne/rocketchat
     # build: .
@@ -49,7 +50,7 @@ services:
       - ./data/dump:/dump
       - /srv/log/mongod:/var/log/mongod
     command: mongod --smallfiles
-        
+
 
 networks:
   server2:
@@ -61,5 +62,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: '172.25.0.0/24'    
+        - subnet: '172.25.0.0/24'
 

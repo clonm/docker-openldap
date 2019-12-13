@@ -1,9 +1,9 @@
-FROM mwaeckerlin/base
+FROM tozd/runit:ubuntu-bionic
 MAINTAINER mwaeckerlin
 ARG backend="mdb"
 ARG overlays=""
-ENV DOMAIN                    ""
-ENV PASSWORD                  ""
+ENV DOMAIN                    "cloyne.org"
+ENV PASSWORD                  "1234567890"
 ENV DEBUG                     1
 ENV ACCESS RULES              "access to * by self write by users read by anonymous auth"
 
@@ -35,13 +35,15 @@ ENV SCHEMAS "cosine inetorgperson nis samba"
 ENV CONTAINERNAME            "openldap"
 ENV USER                     "ldap"
 ENV GROUP                    "$USER"
-ADD samba.schema /etc/openldap/schema/samba.schema
-ADD openssh-lpk.schema /etc/openldap/schema/openssh-lpk.schema
-ADD ldapns.schema /etc/openldap/schema/ldapns.schema
-RUN apk add --no-cache --purge --clean-protected -u openldap openldap-clients openldap-back-$backend ${overlays} \
- && addgroup $USER $SHARED_GROUP_NAME \
- && mkdir /run/openldap \
- && chown $USER.$GROUP /run/openldap
+ADD etc/ldap/schema/samba.schema /etc/openldap/schema/samba.schema
+ADD etc/ldap/schema/openssh-lpk.schema /etc/openldap/schema/openssh-lpk.schema
+ADD etc/ldap/schema/ldapns.schema /etc/openldap/schema/ldapns.schema
+RUN apt-get update \
+#  && apt-get install --yes --force-yes openldap openldap-clients openldap-back-$backend ${overlays} \
+ && apt-get install --yes --force-yes slapd ldap-utils
+RUN adduser --system --group $USER \
+ && mkdir /etc/service/openldap \
+ && chown -R $USER:$GROUP /etc/openldap
 
 EXPOSE 389
 EXPOSE 636
@@ -51,3 +53,7 @@ VOLUME /etc/ldap
 VOLUME /var/lib/ldap
 VOLUME /var/backups
 VOLUME /var/restore
+VOLUME /var/log/openldap
+
+COPY ./etc/service /etc/service
+COPY ./etc/ldap /etc/ldap

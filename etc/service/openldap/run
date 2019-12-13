@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
 
 function error() {
     echo "ERROR: $*" 1>&2
@@ -35,7 +35,7 @@ cat > /tmp/update-config.sed <<EOF
 /^\s*directory\b/cdirectory /var/lib/ldap
 s/^\s*access/# &/
 EOF
-sed -f /tmp/update-config.sed /etc/openldap/slapd.conf > /etc/ldap/slapd.conf
+sed -f /tmp/update-config.sed /usr/share/slapd/slapd.conf > /etc/ldap/slapd.conf
 echo "$ACCESS_RULES" | sed 's, access to,\
 access to,g;s, by,\
 \tby,g' >> /etc/ldap/slapd.conf
@@ -125,7 +125,7 @@ fi
 mkdir -p /var/lib/openldap/run
 chown -R ${USER}.${GROUP} /var/lib/ldap /etc/ldap /var/lib/openldap
 chmod 700 /var/lib/ldap
-/usr/sbin/slapd -u $USER -g $GROUP -d ${DEBUG} -h "ldap:///${SSL_HOSTS}" -f /etc/ldap/slapd.conf
+exec chpst -u $USER:$GROUP /usr/sbin/slapd -u $USER -g $GROUP -d ${DEBUG} -h "ldap:///${SSL_HOSTS}" -f /etc/ldap/slapd.conf 2>&1 >> /var/log/openldap/current
 
 function multimaster() {
     if test -z "$MULTI_MASTER_REPLICATION"; then
