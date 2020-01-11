@@ -1,8 +1,24 @@
-#!/bin/bash -ex
-
+#!/bin/bash +e
 function error() {
     echo "ERROR: $*" 1>&2
     exit
+}
+
+function debian-script() {
+    log "debian-script "
+    debconf-set-selections <<EOF
+slapd slapd/internal/generated_adminpw password ${PASSWORD}
+slapd slapd/internal/adminpw password ${PASSWORD}
+slapd slapd/password1 password ${PASSWORD}
+slapd slapd/password2 password ${PASSWORD}
+slapd shared/organization string ${ORGANIZATION}
+slapd slapd/purge_database boolean false
+slapd slapd/backend select HDB
+slapd slapd/allow_ldap_v2 boolean false
+slapd slapd/domain string ${DOMAIN}
+EOF
+    dpkg-reconfigure -f noninteractive slapd 2> /dev/null > /dev/null
+    logdone
 }
 
 # variables
@@ -14,11 +30,10 @@ if test -z "${PASSWORD}"; then
     if test -e /etc/ldap/password; then
         export PASSWORD="$(cat /etc/ldap/password)"
     else
-	apk update --no-cache > /dev/null
-	apk add --no-cache pwgen > /dev/null
+	apt-get update --no-cache > /dev/null
+	apt-get install --no-cache pwgen > /dev/null
         export PASSWORD=$(pwgen 20 1)
-	apk del --purge pwgen > /dev/null
-	/cleanup.sh
+	apt-get remove --purge pwgen > /dev/null
 	echo "password: $PASSWORD"
         echo "$PASSWORD" > /etc/ldap/password
 	chmod go= /etc/ldap/password
@@ -33,6 +48,7 @@ cat > /tmp/update-config.sed <<EOF
 /^\s*rootdn\b/crootdn\t\t"cn=admin,${BASEDN}"
 /^\s*rootpw\b/crootpw\t\t${PASSWD}
 /^\s*directory\b/cdirectory /var/lib/ldap
+s/@BACKEND@/${BACKEND}/g
 s/^\s*access/# &/
 EOF
 sed -f /tmp/update-config.sed /usr/share/slapd/slapd.conf > /etc/ldap/slapd.conf
@@ -125,7 +141,7 @@ fi
 mkdir -p /var/lib/openldap/run
 chown -R ${USER}.${GROUP} /var/lib/ldap /etc/ldap /var/lib/openldap
 chmod 700 /var/lib/ldap
-exec chpst -u $USER:$GROUP /usr/sbin/slapd -u $USER -g $GROUP -d ${DEBUG} -h "ldap:///${SSL_HOSTS}" -f /etc/ldap/slapd.conf 2>&1 >> /var/log/openldap/current
+exec /usr/sbin/slapd -u $USER -g $GROUP -d ${DEBUG} -h "ldap:///${SSL_HOSTS}" -F /etc/ldap/slapd.d 2>&1 >> /var/log/openldap/current
 
 function multimaster() {
     if test -z "$MULTI_MASTER_REPLICATION"; then
