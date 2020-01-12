@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+mkdir -p /var/log/openldap
+chown nobody:nogroup /var/log/openldap
+
+exec chpst -u nobody:nogroup svlogd -tt /var/log/openldap
