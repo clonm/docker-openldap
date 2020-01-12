@@ -28,7 +28,7 @@ if test -z "${DOMAIN}"; then
 fi
 if test -z "${PASSWORD}"; then
     if test -e /etc/ldap/password; then
-        export PASSWORD="$(cat /etc/ldap/password)"
+        export PASSWORD="$(cat /etc/openldap/password)"
     else
 	apt-get update --no-cache > /dev/null
 	apt-get install --no-cache pwgen > /dev/null

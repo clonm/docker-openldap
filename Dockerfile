@@ -3,7 +3,7 @@ MAINTAINER mwaeckerlin
 ARG backend="mdb"
 ARG overlays=""
 ENV DOMAIN                    "cloyne.org"
-ENV PASSWORD                  "1234567890"
+# ENV PASSWORD                  "1234567890"
 ENV DEBUG                     1
 ENV ACCESS RULES              "access to * by self write by users read by anonymous auth"
 ENV BACKEND=$backend
@@ -50,7 +50,7 @@ EXPOSE 389
 EXPOSE 636
 
 VOLUME /ssl
-VOLUME /etc/ldap
+VOLUME /etc/openldap
 VOLUME /var/lib/ldap
 VOLUME /var/backups
 VOLUME /var/restore
