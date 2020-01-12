@@ -11,11 +11,11 @@ if test -z "${DOMAIN}"; then
     error "Specifying a domain is mandatory, use -e DOMAIN=example.org"
 fi
 if test -z "${PASSWORD}"; then
-    if test -e /etc/ldap/password; then
+    if test -e /etc/openldap/password; then
         export PASSWORD="$(cat /etc/openldap/password)"
     else
-	apt-get update --no-cache > /dev/null
-	apt-get install --no-cache pwgen > /dev/null
+	apt-get update > /dev/null
+	apt-get install --force-yes pwgen > /dev/null
         export PASSWORD=$(pwgen 20 1)
 	apt-get remove --purge pwgen > /dev/null
 	echo "password: $PASSWORD"
@@ -27,20 +27,18 @@ export BASEDN="dc=${DOMAIN//./,dc=}"
 export PASSWD="$(slappasswd -h {SSHA} -s ${PASSWORD})"
 
 # function debian-script() {
-    log "debian-script "
-    debconf-set-selections <<EOF
-slapd slapd/internal/generated_adminpw password ${PASSWORD}
-slapd slapd/internal/adminpw password ${PASSWORD}
-slapd slapd/password1 password ${PASSWORD}
-slapd slapd/password2 password ${PASSWORD}
-slapd shared/organization string ${ORGANIZATION}
-slapd slapd/purge_database boolean false
-slapd slapd/backend select HDB
-slapd slapd/allow_ldap_v2 boolean false
-slapd slapd/domain string ${DOMAIN}
-EOF
-    dpkg-reconfigure -f noninteractive slapd 2> /dev/null > /dev/null
-    logdone
+# debconf-set-selections <<EOF
+# slapd slapd/internal/generated_adminpw password ${PASSWORD}
+# slapd slapd/internal/adminpw password ${PASSWORD}
+# slapd slapd/password1 password ${PASSWORD}
+# slapd slapd/password2 password ${PASSWORD}
+# slapd shared/organization string ${ORGANIZATION}
+# slapd slapd/purge_database boolean false
+# slapd slapd/backend select HDB
+# slapd slapd/allow_ldap_v2 boolean false
+# slapd slapd/domain string ${DOMAIN}
+# EOF
+# dpkg-reconfigure -f noninteractive slapd 2> /dev/null > /dev/null
 # }
 
 
