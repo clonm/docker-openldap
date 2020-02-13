@@ -26,22 +26,6 @@ fi
 export BASEDN="dc=${DOMAIN//./,dc=}"
 export PASSWD="$(slappasswd -h {SSHA} -s ${PASSWORD})"
 
-# function debian-script() {
-# debconf-set-selections <<EOF
-# slapd slapd/internal/generated_adminpw password ${PASSWORD}
-# slapd slapd/internal/adminpw password ${PASSWORD}
-# slapd slapd/password1 password ${PASSWORD}
-# slapd slapd/password2 password ${PASSWORD}
-# slapd shared/organization string ${ORGANIZATION}
-# slapd slapd/purge_database boolean false
-# slapd slapd/backend select HDB
-# slapd slapd/allow_ldap_v2 boolean false
-# slapd slapd/domain string ${DOMAIN}
-# EOF
-# dpkg-reconfigure -f noninteractive slapd 2> /dev/null > /dev/null
-# }
-
-
 # configure
 cat > /tmp/update-config.sed <<EOF
 /^\s*suffix\b/csuffix\t\t"${BASEDN}"
@@ -111,7 +95,7 @@ if test -e /var/restore/*data.ldif; then
 else
     # backup status quo
     if test -n "$(ls -A /var/lib/ldap)"; then
-        slapcat -f /etc/ldap/slapd.conf > /var/backups/${DATE}-startup-data.ldif
+        slapcat -F /etc/ldap/slapd.d > /var/backups/${DATE}-startup-data.ldif
     fi
 fi
 
