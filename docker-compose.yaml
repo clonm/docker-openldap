@@ -11,6 +11,7 @@ services:
           ipv4_address: '172.25.1.8'
     volumes:
     - ./var/lib/ldap:/var/lib/ldap
+    - /srv/var/log/openldap:/var/log/openldap
     # - ./etc/ldap:/etc/ldap
 
     environment:
