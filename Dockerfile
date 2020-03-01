@@ -31,7 +31,7 @@ ENV BACKEND=$backend
 # (1) allways added
 # (2) required by inetorgperson
 # (3) required by default lam configuration
-ENV SCHEMAS "cosine inetorgperson nis samba"
+ENV SCHEMAS "openssh-lpk"
 
 ENV CONTAINERNAME            "openldap"
 ENV USER                     "openldap"

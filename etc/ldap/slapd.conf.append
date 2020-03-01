@@ -1,0 +1,11 @@
+include         /etc/ldap/schema/core.schema
+pidfile         /var/run/slapd/slapd.pid
+argsfile        /var/run/slapd/slapd.args
+modulepath      /usr/lib/ldap
+moduleload
+backend
+database
+suffix
+rootdn
+rootpw
+directory
