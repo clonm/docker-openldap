@@ -1,13 +1,13 @@
 version: "3"
 services:
-  web:
+  ldap:
     image: clonm/openldap
     container_name: ldap
     ports:
       - "389:389"
       - "636:636"
     networks:
-        server3:
+        server2:
           ipv4_address: '172.25.1.8'
     volumes:
     - ./var/lib/ldap:/var/lib/ldap
@@ -20,7 +20,7 @@ services:
       DEBUG: 10
 
 networks:
-  server3:
+  server2:
     driver: bridge
     ipam:
       config:
