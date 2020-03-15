@@ -36,7 +36,8 @@ if test -e /var/restore/*data.ldif; then
 else
     # backup status quo
     if test -n "$(ls -A /var/lib/ldap)"; then
-        slapcat -f /etc/ldap/slapd.conf -F /etc/ldap/slapd.d > /var/backups/${DATE}-startup-data.ldif
+        # This line will fail if ldap isn't already running, so ignore the error
+        slapcat -f /etc/ldap/slapd.conf -F /etc/ldap/slapd.d > /var/backups/${DATE}-startup-data.ldif || true
     fi
 fi
 
