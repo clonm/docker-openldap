@@ -12,9 +12,10 @@ services:
     volumes:
     - ./var/lib/ldap:/var/lib/ldap
     - /srv/var/log/openldap:/var/log/openldap
+    # - ./etc/ldap:/etc/ldap
 
     environment:
-      DOMAIN: ldap.cloyne.org
+      DOMAIN: cloyne.org
       PASSWORD: 1234567890
       DEBUG: 10
 
@@ -39,6 +40,7 @@ services:
       - "3000:3000"
     links:
         - mongo:mongo
+
   mongo:
     image: cloyne/mongodb:3.6
     container_name: mongo
@@ -51,7 +53,6 @@ services:
       - /srv/log/mongod:/var/log/mongod
     command: mongod --smallfiles
 
-
 networks:
   server2:
     driver: bridge
@@ -63,4 +64,3 @@ networks:
     ipam:
       config:
         - subnet: '172.25.0.0/24'
-
